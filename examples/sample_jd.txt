@@ -1,0 +1,13 @@
+Senior AI Engineer at TechCorp
+
+Responsibilities:
+- Build LLM-powered applications
+- Design agentic workflows
+- Lead technical projects
+
+Requirements:
+- 5+ years in AI/ML
+- Experience with OpenAI API
+- Strong Python skills
+- Familiar with RAG, LangChain, or similar
+- Experience with MLOps tooling (MLflow, Kubeflow) is a plus

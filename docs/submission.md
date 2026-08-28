@@ -1,5 +1,7 @@
 # OphenAI Developer Award - Project Submission
 
+> ⚠️ Before submitting, replace `[Your Name]` below and paste your final demo video link into the `### Video Walkthrough` section.
+
 ## Project Information
 
 | Field | Details |
@@ -13,7 +15,7 @@
 
 ## Executive Summary
 
-**AI Employee OS** is an open-source framework for building practical AI agents for business workflows. 
+**AI Employee OS** is an open-source framework for building practical AI agents for business workflows.
 
 This submission features the **HR Agent Edition** — an AI-powered recruitment assistant that automates resume screening and candidate evaluation. The system parses resumes, matches candidates against job descriptions, generates comprehensive scoring reports, and integrates with n8n for end-to-end workflow automation.
 
@@ -47,7 +49,16 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 
 ### System Overview
 
-
+```mermaid
+flowchart LR
+    A[Resume PDF] --> B[HR Agent]
+    JD[Job Description] --> B
+    B -->|parse + score| C[CandidateScore]
+    C --> D[Markdown Report]
+    C -->|/analyze JSON| E[n8n Webhook]
+    E --> F[HR Agent API :8000]
+    F --> G[Notion Database]
+```
 
 ### Key Components
 
@@ -56,6 +67,7 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 - **Structured extraction**: Uses OpenAI GPT-4o-mini to parse resumes into structured JSON
 - **Intelligent scoring**: Evaluates candidates across 4 dimensions (Skills, Experience, Culture, Growth)
 - **Report generation**: Produces markdown reports with strengths, risks, and interview recommendations
+- **HTTP server**: A built-in `POST /analyze` endpoint (stdlib `http.server`, no extra dependency) lets n8n call the agent
 
 #### 2. System Prompt (`agents/hr-agent/prompts/system_prompt.md`)
 - Defines the agent's role as an AI HR specialist
@@ -63,15 +75,19 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 - Standardizes output format for consistency
 - Provides example outputs for quality benchmarks
 
-#### 3. Workflow Automation (`workflows/n8n/hr-agent-workflow.json`)
-- n8n webhook receives incoming resumes
-- Triggers HR Agent via HTTP request
-- Saves analysis reports to Notion database
+#### 3. Demo UI (`agents/hr-agent/ui.py`)
+- A Streamlit app for non-technical users / live demos
+- Upload a resume, paste a JD, click **Analyze** — get the score report instantly
+
+#### 4. Workflow Automation (`workflows/n8n/hr-agent-workflow.json`)
+- n8n webhook (`POST /resume-screening`) receives a base64 resume + JD
+- Triggers the HR Agent via `POST http://localhost:8000/analyze`
+- Saves the analysis report to a Notion database
 - Enables end-to-end automation without manual intervention
 
-#### 4. Environment Configuration
+#### 5. Environment Configuration
 - `.env.example` provides secure API key management
-- `requirements.txt` lists all Python dependencies
+- `requirements.txt` lists all Python dependencies (core + optional UI)
 - Quick start commands for immediate testing
 
 ---
@@ -92,11 +108,12 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 | Metric | Value |
 |--------|-------|
 | Python Version | 3.11+ |
-| Dependencies | 4 (minimal) |
-| Files | 10+ |
-| Documentation | Comprehensive |
+| Core dependencies | 3 (openai, pypdf, python-dotenv) |
+| Optional dependencies | 1 (streamlit, demo UI only) |
 | Type Hints | Yes |
 | Example Data | Yes |
+| Runnable CLI | Yes |
+| HTTP API | Yes (`/analyze`) |
 
 ### Architecture Principles
 
@@ -111,7 +128,9 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 
 ### Video Walkthrough
 
-**[Link to Demo Video]** (3 minutes)
+**[Paste your demo video link here — YouTube or Vimeo, ~3 minutes]**
+
+> Tip: follow `demo/recording-script.md` for a scene-by-scene shooting guide.
 
 ### What the Demo Shows
 
@@ -125,6 +144,31 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 
 ### Sample Output
 
+See [`examples/sample_output.md`](examples/sample_output.md). A representative result:
+
+```markdown
+# Candidate Report: Jane Doe
+**Overall Score:** 87/100
+
+## Strengths
+- 5+ years AI/ML experience
+- OpenAI API expertise
+- Full-stack Python
+- Team leadership
+
+## Risks
+- Limited RAG experience
+- No LangChain exposure
+- Gap in MLOps
+
+## Recommendation: **Advance to Interview**
+
+## Match Breakdown
+- skills_match: 90/100
+- experience_match: 85/100
+- culture_fit: 82/100
+- growth_potential: 88/100
+```
 
 ---
 
@@ -134,6 +178,7 @@ AI Employee OS - HR Agent Edition automates the initial screening process by:
 HR teams can automate the initial candidate screening process, reducing time-to-hire and improving consistency.
 
 ### Extendable Use Cases
+
 | Agent | Function |
 |-------|----------|
 | **HR Agent** (✅ Complete) | Resume screening, candidate evaluation, interview recommendations |
@@ -188,7 +233,7 @@ Demonstrates practical ROI by solving a real HR problem rather than just demonst
 ## Future Plans
 
 ### Short-term
-- [ ] Add Streamlit UI for non-technical users
+- [ ] Add Streamlit UI for non-technical users ✅ (shipped in `ui.py`)
 - [ ] Support for multiple resume formats (.docx, .txt)
 - [ ] Integration with LinkedIn API
 - [ ] Candidate database storage
@@ -205,7 +250,8 @@ Demonstrates practical ROI by solving a real HR problem rather than just demonst
 
 - Built with [OpenAI API](https://openai.com/)
 - Workflow automation via [n8n](https://n8n.io/)
-- Powered by Python open-source ecosystem
+- Demo UI via [Streamlit](https://streamlit.io/)
+- Powered by the Python open-source ecosystem
 
 ---
 

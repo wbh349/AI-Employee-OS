@@ -1,4 +1,7 @@
+# Core runtime (required)
 openai>=1.0.0
 pypdf>=3.0.0
-streamlit>=1.28.0
 python-dotenv>=1.0.0
+
+# Optional demo UI — only needed for `streamlit run ui.py`
+streamlit>=1.28.0

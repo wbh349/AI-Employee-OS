@@ -2,22 +2,38 @@
   "name": "HR Agent - Automated Resume Screening",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resume-screening",
+        "responseMode": "lastNode"
+      },
       "id": "webhook-node",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
-      "typeVersion": 1,
-      "position": [250, 300]
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "hr-agent-resume-screening"
     },
     {
       "parameters": {
         "url": "http://localhost:8000/analyze",
         "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
         "bodyParameters": {
           "parameters": [
             {
-              "name": "resume",
-              "value": "={{ $json.resume_url }}"
+              "name": "resume_base64",
+              "value": "={{ $json.resume_base64 }}"
             },
             {
               "name": "job_description",
@@ -30,10 +46,12 @@
       "name": "Call HR Agent API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [450, 300]
+      "position": [470, 300]
     },
     {
       "parameters": {
+        "resource": "database",
+        "operation": "create",
         "values": {
           "string": [
             {
@@ -63,7 +81,23 @@
       "name": "Save to Notion",
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2,
-      "position": [650, 300]
+      "position": [690, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "NOTION_CREDENTIAL_ID",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## HR Agent automation\n\n1. Start the API server locally:\n   `python agents/hr-agent/app.py --serve`\n2. POST to the Webhook (path `resume-screening`) with JSON:\n   `{ \"resume_base64\": \"<base64 pdf>\", \"job_description\": \"<jd text>\" }`\n3. The HTTP node calls `/analyze` and the result is written to Notion.\n\nRequires: OpenAI credential in `.env`, and a Notion API credential set on the Notion node."
+      },
+      "id": "sticky-note",
+      "name": "Usage",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [250, 480]
     }
   ],
   "connections": {
@@ -95,6 +129,6 @@
   },
   "staticData": null,
   "pinData": {},
-  "versionId": "hr-agent-workflow-v1",
+  "versionId": "hr-agent-workflow-v2",
   "triggerCount": 0
 }

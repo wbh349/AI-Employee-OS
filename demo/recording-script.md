@@ -5,6 +5,9 @@
 **Duration:** ~3 minutes
 **Target:** OphenAI Developer Award Application
 
+> Paths below match the actual repo. Note: the resume screening API runs locally
+> (`python agents/hr-agent/app.py --serve`) — start it before the n8n scene.
+
 ---
 
 ## 0:00 - 0:30 | Introduction
@@ -21,13 +24,13 @@ AI Employee OS helps developers build business automation agents using LLMs and 
 
 ### Screenshot to include:
 - GitHub repository landing page
-- Project structure tree
+- Project structure tree (from README)
 
 ---
 
 ## 0:30 - 1:30 | Core Agent Demo
 
-### Visual: Terminal or Streamlit UI running
+### Visual: Streamlit UI (`streamlit run agents/hr-agent/ui.py`) OR terminal CLI
 
 **Script:**
 
@@ -43,10 +46,9 @@ When I run the agent, it:
 
 Watch as the agent processes this candidate..."
 
-### Action:
-- Run: `python agents/hr-agent/app.py` or show Streamlit interface
-- Upload a sample resume
-- Display the output report
+### Action (pick one):
+- **UI:** `streamlit run agents/hr-agent/ui.py` → upload `examples/sample_resume.pdf`, paste `examples/sample_jd.txt`, click **Analyze**
+- **CLI:** `python agents/hr-agent/app.py --resume examples/sample_resume.pdf --jd examples/sample_jd.txt`
 
 ### Screenshot to include:
 - Input: resume file + job description
@@ -78,20 +80,27 @@ This gives HR teams actionable insights in seconds, not hours."
 
 ## 2:00 - 2:45 | Automation with n8n
 
-### Visual: n8n workflow diagram or the JSON we created
+### Visual: n8n workflow diagram or the JSON (`workflows/n8n/hr-agent-workflow.json`)
 
 **Script:**
 
 "What makes this an 'AI Employee' is the automation layer.
 
 I've configured an n8n workflow that:
-1. Listens for incoming resume emails
-2. Triggers the HR Agent automatically
+1. Listens for incoming resumes on a webhook (`POST /resume-screening`)
+2. Calls the HR Agent API at `http://localhost:8000/analyze`
 3. Saves the analysis report to Notion
 
 This creates a fully automated recruitment pipeline — no manual intervention needed.
 
 The workflow is defined as code in the repository, so you can customize it for your own tools."
+
+### Setup before recording:
+```bash
+# terminal 1 — start the agent API
+python agents/hr-agent/app.py --serve
+# terminal 2 — import workflows/n8n/hr-agent-workflow.json into n8n and activate
+```
 
 ### Screenshot to include:
 - n8n workflow visualization
@@ -125,11 +134,12 @@ This project was built for the OphenAI Developer Award. Thank you for watching!"
 Before recording:
 
 - [ ] Clone the repo locally
+- [ ] `pip install -r agents/hr-agent/requirements.txt`
 - [ ] Set up `.env` with your OpenAI API key
-- [ ] Run `pip install -r requirements.txt`
-- [ ] Have a sample resume PDF ready
-- [ ] Have a sample job description ready
-- [ ] (Optional) n8n running locally with webhook exposed
+- [ ] Have a sample resume PDF ready (or use `examples/sample_resume.pdf`)
+- [ ] Have a sample job description ready (`examples/sample_jd.txt`)
+- [ ] (Optional) `python agents/hr-agent/app.py --serve` running for the n8n scene
+- [ ] (Optional) n8n running locally with the workflow imported
 
 ## Sample Resume (for demo)
 
@@ -139,14 +149,10 @@ Create or use a sample resume with:
 - Strong project leadership
 - Educational background in CS or related
 
-## Sample Job Description
-
----
-
 ## Post-Production
 
 1. Record screen with OBS or QuickTime
 2. Add voiceover (optional)
 3. Keep under 3 minutes
 4. Upload to YouTube or Vimeo
-5. Add link to submission
+5. Paste the link into `docs/submission.md` (### Video Walkthrough)
