@@ -1,0 +1,100 @@
+{
+  "name": "HR Agent - Automated Resume Screening",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8000/analyze",
+        "method": "POST",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "resume",
+              "value": "={{ $json.resume_url }}"
+            },
+            {
+              "name": "job_description",
+              "value": "={{ $json.job_description }}"
+            }
+          ]
+        }
+      },
+      "id": "http-request-node",
+      "name": "Call HR Agent API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "candidate_name",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "overall_score",
+              "value": "={{ $json.overall_score }}"
+            },
+            {
+              "name": "recommendation",
+              "value": "={{ $json.recommendation }}"
+            },
+            {
+              "name": "strengths",
+              "value": "={{ $json.strengths.join(', ') }}"
+            },
+            {
+              "name": "risks",
+              "value": "={{ $json.risks.join(', ') }}"
+            }
+          ]
+        }
+      },
+      "id": "notion-node",
+      "name": "Save to Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Call HR Agent API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call HR Agent API": {
+      "main": [
+        [
+          {
+            "node": "Save to Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "versionId": "hr-agent-workflow-v1",
+  "triggerCount": 0
+}
